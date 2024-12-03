@@ -16,7 +16,8 @@
     "axios": "^1.4.0",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.8",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "framer-motion": "^6.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
