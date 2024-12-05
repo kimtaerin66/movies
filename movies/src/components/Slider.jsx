@@ -1,6 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {AnimatePresence, motion} from "framer-motion";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faAngleRight, faAngleLeft} from "@fortawesome/free-solid-svg-icons";
+
 
 
 const Wrap = styled.div`
@@ -8,6 +11,7 @@ const Wrap = styled.div`
     position: relative;
     margin-bottom: 70px;
     padding-bottom: 120px;
+
 
 `;
 const STitle = styled.p`
@@ -45,15 +49,23 @@ const Box = styled(motion.div)`
 `;
 
 
-const RightArrow = styled.svg`
+const RightArrow = styled.p`
     position: absolute;
     top: 40%;
     right: 10px;
+    width: 55px;
+    height: 55px;
+    //fill: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    //filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.5));
+`;
+const LeftArrow = styled.p`
+    position: absolute;
+    top: 40%;
+    left: 10px;
     width: 45px;
     height: 45px;
-    fill: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.5));
 `;
 
 
@@ -61,7 +73,7 @@ const Info = styled(motion.div)`
     padding: 10px 0 0 0;
     background-color: white;
     opacity: 0;
-    position: absolute;
+    //position: absolute;
     width: 100%;
     box-sizing: border-box;
     bottom: 0;
@@ -120,6 +132,18 @@ function Slider({title, data, viewDetails}) {
         return urls?.slice(0, 60);
     }
 
+    const increaseIndex = (index)=>{
+        if(index === 2)return;
+        setIndex(++index);
+    }
+    const decreseIndex = (index)=>{
+        if(index === 0)return;
+        setIndex(--index);
+    }
+
+    useEffect(()=>{
+    },[index]);
+
     return (
         <>
             <Wrap>
@@ -154,13 +178,21 @@ function Slider({title, data, viewDetails}) {
                                 </Info>
                             </Box>
                         ))}
-                        <RightArrow
-                            // onClick={increaseIndex}
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 256 512"
-                        >
-                            <path
-                                d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/>
+                        <LeftArrow>
+                            <FontAwesomeIcon icon={faAngleLeft}
+                                             onClick={()=> decreseIndex(index)}
+                                             color={"#eee"}
+                                             size={"3x"}
+                                             style={{opacity:0.8}}
+                            />
+                        </LeftArrow>
+                        <RightArrow>
+                        <FontAwesomeIcon icon={faAngleRight}
+                            onClick={()=>increaseIndex(index)}
+                                         color={"#eee"}
+                               size={"3x"}
+                                         style={{opacity:0.8}}
+                         />
                         </RightArrow>
                     </Row>
                 </AnimatePresence>

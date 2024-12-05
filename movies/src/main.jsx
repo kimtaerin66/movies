@@ -59,6 +59,9 @@ const GlobalStyle = createGlobalStyle`
         font-family: "GmarketSansMedium", 'Noto Sans', sans-serif;
         background-color: black;
         letter-spacing: -0.5px;
+        max-width: 100%;
+        min-width: 1400px;
+
     }
 
     ol, ul, li {

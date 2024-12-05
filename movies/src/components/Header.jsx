@@ -28,11 +28,17 @@ const MenuItem = styled.li`
     padding: 5px 12px;
     letter-spacing: -1px;
 `;
-const Search = styled.div``;
+const Search = styled.div`
+display: flex;
+    align-items: center;
+    position: relative;
+`;
 const Input = styled.input`
-    width: 270px;
-    padding: 5px 0 5px 10px;
+    width: 350px;
+    padding: 8px 0 8px 10px;
     margin-right: 5px;
+    border: 1px solid #a0a0a0;
+    
 `;
 
 const Left = styled.div`
@@ -40,6 +46,8 @@ const Left = styled.div`
 `;
 const Right = styled.div`
     margin-right: 20px;
+    display: flex;
+    align-items: center;
 `;
 
 // 사용자의 scroll을 감지해 top이 0이면 black, 내려가면 white
@@ -65,21 +73,16 @@ function Header() {
                         />
                         <FontAwesomeIcon icon={faMagnifyingGlass}
                                          size={"lg"}
-                                         style={{cursor: "pointer", paddingRight: "10px"}}
+                                         color={"#333"}
+                                         style={{cursor: "pointer", paddingRight: "10px",
+                                             position: "absolute", right: "5px"}}
                         />
-                        <FontAwesomeIcon icon={faUser}
-                                         size={"lg"}
-                                         style={{cursor: "pointer", padding: "0 7px"}}
-                        />
-                        {/*<FontAwesomeIcon*/}
-                        {/*    icon={faCopy} color={"#555"}*/}
-                        {/*    style={{cursor: "pointer"}}*/}
-                        {/*    onClick={() => {*/}
-                        {/*        // copyToClipboard(row.hosp_prcp_seq);*/}
-                        {/*        // setMessage({message: MessageCollection.COPY});*/}
-                        {/*    }}*/}
-                        {/*/>*/}
                     </Search>
+                    <FontAwesomeIcon icon={faUser}
+                                     size={"lg"}
+                                     color={"#333"}
+                                     style={{cursor: "pointer", padding: "0 7px"}}
+                    />
                 </Right>
             </Wrapper>
         </>

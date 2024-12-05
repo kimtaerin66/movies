@@ -8,7 +8,7 @@ import ViewDetailsModal from "../components/ViewDetailsModal.jsx";
 
 
 const Wrapper = styled.div`
-    background-color: black;
+    width: 100;
 `;
 
 const Loader = styled.div`
@@ -89,13 +89,13 @@ function Home() {
             }
         })();
     };
-    const getKoreaMovies = () => {
+    const getChristmasMovies = () => {
         (async () => {
             try {
                 const res = await request.get(``, {
                     params: {
                         ...commonParams,
-                        nation: "대한민국",
+                        query: "크리스마스",
                     }
                 });
                 setKoreaRows(checkExistPoster(res));
@@ -126,7 +126,6 @@ function Home() {
         setOpenModal(false);
     }
 
-
     const viewDetails = (movie) => {
         setSelectedMovie(movie);
         setOpenModal(true);
@@ -135,13 +134,12 @@ function Home() {
     useEffect(() => {
         (() => {
             getNewMovies();
-            getKoreaMovies();
+            getChristmasMovies();
             getAniMovies();
         })();
     }, []);
 
     return (
-        //이름 장르 개봉일 평점 줄거리 ... > 자세히보기 클릭시 이동
         <>
             <Wrapper>
                 {isLoading ? (<Loader>Loading...</Loader>)
@@ -161,7 +159,7 @@ function Home() {
                             ) : <></>}
                             {koreaRows && koreaRows.length > 0 ? (
                                 <Slider
-                                    title="한국 영화"
+                                    title="메리 크리스마스 ! 크리스마스 관련 영화"
                                     data={koreaRows}
                                     viewDetails={viewDetails}
                                 > </Slider>
