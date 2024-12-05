@@ -57,7 +57,7 @@ const PlayBtn = styled.button`
 function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-
+    const [selectedMovie, setSelectedMovie] = useState();
 
     const [newRows, setNewRows] = useState([]);
     const [koreaRows, setKoreaRows] = useState([]);
@@ -84,7 +84,7 @@ function Home() {
                     }
                 });
                 setNewRows(checkExistPoster(res));
-            }catch (e) {
+            } catch (e) {
                 console.error(e);
             }
         })();
@@ -108,11 +108,11 @@ function Home() {
         (async () => {
             try {
                 const res = await request.get(``, {
-                params: {
-                    ...commonParams,
-                    type: "애니메이션",
-                }
-            });
+                    params: {
+                        ...commonParams,
+                        type: "애니메이션",
+                    }
+                });
                 setAniRows(checkExistPoster(res));
             } catch (e) {
                 console.error(e);
@@ -122,9 +122,13 @@ function Home() {
     const checkExistPoster = (res) => {
         return res.data.Data[0].Result.filter((el) => el.posters !== "");
     }
+    const closeModal = ()=>{
+        setOpenModal(false);
+    }
+
 
     const viewDetails = (movie) => {
-        console.log("클릭한 영화",movie)
+        setSelectedMovie(movie);
         setOpenModal(true);
 
     };
@@ -136,50 +140,49 @@ function Home() {
         })();
     }, []);
 
-    useEffect(() => {
-
-    }, [openModal]);
     return (
         //이름 장르 개봉일 평점 줄거리 ... > 자세히보기 클릭시 이동
         <>
-        <Wrapper>
-            {isLoading ? (<Loader>Loading...</Loader>)
-                : (<>
-                        <Header></Header>
-                        <Banner>
-                            <Title>Movies</Title>
-                            <Overview></Overview>
-                            <PlayBtn>&#x25B6; Play</PlayBtn>
-                        </Banner>
-                        {newRows && newRows.length > 0 ? (
-                            <Slider
-                                title="따끈따끈, 최신 영화"
-                                data={newRows}
-                                viewDetails={viewDetails}
-                            > </Slider>
-                        ) : <></>}
-                        {koreaRows && koreaRows.length > 0 ? (
-                            <Slider
-                                title="한국 영화"
-                                data={koreaRows}
-                                viewDetails={viewDetails}
-                            > </Slider>
-                        ) : <></>}
-                        {aniRows && aniRows.length > 0 ? (
-                            <Slider
-                                title="가족과 함께, 애니메이션"
-                                data={aniRows}
-                                viewDetails={viewDetails}
-                            > </Slider>
-                        ) : <></>}
-                    </>
-                )}
-        </Wrapper>
-    {
-        <ViewDetailsModal
-            open={openModal}
-        />}
-    </>
+            <Wrapper>
+                {isLoading ? (<Loader>Loading...</Loader>)
+                    : (<>
+                            <Header></Header>
+                            <Banner>
+                                <Title>Movies</Title>
+                                <Overview></Overview>
+                                <PlayBtn>&#x25B6; Play</PlayBtn>
+                            </Banner>
+                            {newRows && newRows.length > 0 ? (
+                                <Slider
+                                    title="따끈따끈, 최신 영화"
+                                    data={newRows}
+                                    viewDetails={viewDetails}
+                                > </Slider>
+                            ) : <></>}
+                            {koreaRows && koreaRows.length > 0 ? (
+                                <Slider
+                                    title="한국 영화"
+                                    data={koreaRows}
+                                    viewDetails={viewDetails}
+                                > </Slider>
+                            ) : <></>}
+                            {aniRows && aniRows.length > 0 ? (
+                                <Slider
+                                    title="가족과 함께, 애니메이션"
+                                    data={aniRows}
+                                    viewDetails={viewDetails}
+                                > </Slider>
+                            ) : <></>}
+                        </>
+                    )}
+            </Wrapper>
+            {selectedMovie ?
+                <ViewDetailsModal
+                    open={openModal}
+                    movie={selectedMovie}
+                    closeModal={closeModal}
+                /> : <></>}
+        </>
     )
 }
 
