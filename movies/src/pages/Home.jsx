@@ -8,7 +8,7 @@ import ViewDetailsModal from "../components/ViewDetailsModal.jsx";
 
 
 const Wrapper = styled.div`
-    width: 100;
+    width: 100%;
 `;
 
 const Loader = styled.div`
