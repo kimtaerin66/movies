@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faMagnifyingGlass, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import request from "../config/Axios.js";
 import {Outlet, useNavigate} from "react-router-dom";
 
@@ -14,7 +14,7 @@ const Wrapper = styled.header`
     justify-content: space-between;
     position: fixed;
     min-width: 100%;
-    top:0;
+    top: 0;
     left: 0;
 `;
 
@@ -32,16 +32,24 @@ const Menu = styled.ul`
 const MenuItem = styled.li`
     padding: 5px 12px;
     letter-spacing: -1px;
+    cursor: pointer;
+
+    &:hover {
+        color: #ff4444;
+    }
 `;
 const Search = styled.div`
     display: flex;
     align-items: center;
     position: relative;
+    margin-right: 10px;
+
 `;
 const Input = styled.input`
-    width: 350px;
+    width: 550px;
     padding: 8px 0 8px 10px;
     margin-right: 5px;
+    border-radius: 5px;
     border: 1px solid #a0a0a0;
 
 
@@ -58,6 +66,7 @@ const Input = styled.input`
     }
 
     /* IE에서 검색 입력이 취소된 후 남는 공간도 제거할 수 있음 */
+
     &::-webkit-input-placeholder {
         text-align: left;
     }
@@ -66,11 +75,21 @@ const Input = styled.input`
 
 const Left = styled.div`
     display: flex;
+    margin-left: 20px;
 `;
 const Right = styled.div`
     margin-right: 20px;
     display: flex;
     align-items: center;
+`;
+
+const LoginBtn = styled.button`
+    padding: 7px 15px;
+    border-radius: 8px;
+    margin-right: 20px;
+    background-color: #ff4444;
+    color: white;
+    letter-spacing: -0.8px;
 `;
 
 // 사용자의 scroll을 감지해 top이 0이면 black, 내려가면 white
@@ -88,7 +107,7 @@ function Header() {
         listCount: 50
     }
 
-    const handleSearchEnter = (e)=>{
+    const handleSearchEnter = (e) => {
         if (e.key === "Enter") {
             searchMovies(e);
             navigate("/search");
@@ -116,9 +135,9 @@ function Header() {
                 <Left>
                     <Logo> The Movies </Logo>
                     <Menu>
-                        <MenuItem> HOME </MenuItem>
-                        <MenuItem> 지금 뜨는 영화 </MenuItem>
-                        <MenuItem> 추천 영화 </MenuItem>
+                        <MenuItem onClick={()=> navigate("/")}> HOME </MenuItem>
+                        <MenuItem onClick={()=> navigate("/rank")}> 영화 랭킹 </MenuItem>
+                        <MenuItem onClick={()=> navigate("/findCinema")}> 내 주변 영화관찾기 </MenuItem>
                     </Menu>
                 </Left>
                 <Right>
@@ -126,11 +145,11 @@ function Header() {
                         <Input
                             type={"search"}
                             placeholder={"영화명, 감독명을 검색하세요"}
-                            onKeyDown={(e)=>handleSearchEnter(e)}
+                            onKeyDown={(e) => handleSearchEnter(e)}
                         />
                         <FontAwesomeIcon icon={faMagnifyingGlass}
                                          size={"lg"}
-                                         color={"#333"}
+                                         color={"#787878"}
                                          style={{
                                              cursor: "pointer", paddingRight: "10px",
                                              position: "absolute", right: "5px"
@@ -138,11 +157,13 @@ function Header() {
                                          onClick={(e) => searchMovies(e)}
                         />
                     </Search>
-                    <FontAwesomeIcon icon={faUser}
-                                     size={"lg"}
-                                     color={"#333"}
-                                     style={{cursor: "pointer", padding: "0 7px"}}
-                    />
+                    {/*<FontAwesomeIcon icon={faUser}*/}
+                    {/*                 size={"lg"}*/}
+                    {/*                 color={"#333"}*/}
+                    {/*                 style={{cursor: "pointer", padding: "0 7px"}}*/}
+                    {/*/>*/}
+                    <LoginBtn
+                        onClick={() => navigate("/login")}> 로그인 </LoginBtn>
                 </Right>
             </Wrapper>
             <Outlet></Outlet>

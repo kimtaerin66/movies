@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {AnimatePresence, motion} from "framer-motion";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleRight, faAngleLeft} from "@fortawesome/free-solid-svg-icons";
-
+import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 
 
 const Wrap = styled.div`
@@ -51,30 +50,32 @@ const Box = styled(motion.div)`
 
 const RightArrow = styled.p`
     position: absolute;
+    cursor: pointer;
     top: 40%;
     right: 10px;
-    width: 55px;
-    height: 55px;
-    //fill: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    //filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.5));
+    width: 45px;
+    height: 45px;
+    display: ${(props) => props.index === 2 ? "none" : "default"}
+    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.2));
 `;
 const LeftArrow = styled.p`
     position: absolute;
+    cursor: pointer;
     top: 40%;
     left: 10px;
     width: 45px;
     height: 45px;
-    cursor: pointer;
+    display: ${(props) => props.index === 0 ? "none" : "default"}
+    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.2));
 `;
 
 
 const Info = styled(motion.div)`
-    padding: 10px 0 0 0;
+    padding: 10px 0 3px 0;
     background-color: white;
     opacity: 0;
-    //position: absolute;
-    width: 100%;
+    position: absolute;
+    width: 312px;
     box-sizing: border-box;
     bottom: 0;
 
@@ -101,8 +102,7 @@ const BoxVariants = {
         scale: 1,
     },
     hover: {
-        scale: 1.3,
-        y: -50, //위로올라가기
+        y: -10, //위로올라가기
         transition: {
             delay: 0.5,
             duration: 0.3,
@@ -125,24 +125,40 @@ const infoVariants = {
 export const offset = 6; //6개씩 보일것이니
 
 
-function Slider({title, data, viewDetails}) {
-    const [index, setIndex] = useState(0);
+function Slider({title, data, viewDetails, type}) {
+    const [mIndex, setMIndex] = useState({
+        "new": 0,
+        "christmas": 0,
+        "ani": 0
+    });
+    const [leaving, setLeaving] = useState(false);
+    const maxCount = 18;
 
     const getPoster = (urls) => {
         return urls?.slice(0, 60);
     }
-
-    const increaseIndex = (index)=>{
-        if(index === 2)return;
-        setIndex(++index);
+    const toggleLeaving = () => setLeaving((prev) => !prev);
+    const increaseIndex = (type, index) => {
+        // if ((index + 1) * offset >= maxCount) {
+        //     return;
+        // }
+        const updateMIndex = () => ({
+            ...mIndex,
+            [type]: ++mIndex[type]
+        })
+        setMIndex(updateMIndex);
     }
-    const decreseIndex = (index)=>{
-        if(index === 0)return;
-        setIndex(--index);
+    const decreaseIndex = (type, index) => {
+        // if ((index + 1) * offset === 0) {
+        //     return;
+        // }
+        const updateMIndex = () => ({
+            ...mIndex,
+            [type]: --mIndex[type]
+        })
+        setMIndex(updateMIndex);
     }
 
-    useEffect(()=>{
-    },[index]);
 
     return (
         <>
@@ -150,17 +166,17 @@ function Slider({title, data, viewDetails}) {
                 <STitle>{title}</STitle>
                 <AnimatePresence
                     initial={false}
-                    // onExitComplete={toggleLeaving}
+                    onExitComplete={toggleLeaving}
                 >
                     <Row
-                        key={index}
+                        key={mIndex}
                         variants={rowVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
                         transition={{type: "tween", duration: 1}}
                     >
-                        {data && data.slice(offset * index, offset * index + offset).map((movie) => (
+                        {data && data.slice(offset * mIndex, offset * mIndex + offset).map((movie) => (
                             <Box
                                 key={movie.DOCID}
                                 variants={BoxVariants}
@@ -174,25 +190,25 @@ function Slider({title, data, viewDetails}) {
                                 onClick={() => viewDetails(movie)}
                             >
                                 <Info variants={infoVariants}>
-                                    <h4>{movie.title}</h4>
+                                    <h4>{movie.title.length >= 22 ? movie.title.slice(0, 22) + "..." : movie.title}</h4>
                                 </Info>
                             </Box>
                         ))}
-                        <LeftArrow>
+                        <LeftArrow index={mIndex}>
                             <FontAwesomeIcon icon={faAngleLeft}
-                                             onClick={()=> decreseIndex(index)}
+                                             onClick={() => decreaseIndex(type, mIndex)}
                                              color={"#eee"}
                                              size={"3x"}
-                                             style={{opacity:0.8}}
+                                             style={{opacity: 0.8}}
                             />
                         </LeftArrow>
-                        <RightArrow>
-                        <FontAwesomeIcon icon={faAngleRight}
-                            onClick={()=>increaseIndex(index)}
-                                         color={"#eee"}
-                               size={"3x"}
-                                         style={{opacity:0.8}}
-                         />
+                        <RightArrow index={mIndex}>
+                            <FontAwesomeIcon icon={faAngleRight}
+                                             onClick={() => increaseIndex(type, mIndex)}
+                                             color={"#eee"}
+                                             size={"3x"}
+                                             style={{opacity: 0.8}}
+                            />
                         </RightArrow>
                     </Row>
                 </AnimatePresence>

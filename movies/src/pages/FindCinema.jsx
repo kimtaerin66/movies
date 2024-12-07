@@ -14,8 +14,7 @@ const Title = styled.h2`
     font-weight: 700;
     color: #e1e4e8;
     padding-bottom: 10px;
-    padding-left: 15px;
-    border-bottom: 1px solid rgba(205, 205, 205, 0.55);
+    border-bottom: 1px solid #e1e4e8;
 `;
 const Ul = styled.ul`
 `
@@ -25,9 +24,9 @@ const Li = styled.li`
 
 
 
-function SearchedMovies() {
+function FindCinema() {
     return <Wrap>
-        <Title>검색 결과</Title>
+        <Title>내 주변 영화관찾기</Title>
             <Ul>
                 <Li>
                 </Li>
@@ -35,4 +34,4 @@ function SearchedMovies() {
     </Wrap>
 }
 
-export default SearchedMovies;
+export default FindCinema;

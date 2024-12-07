@@ -9,6 +9,7 @@ import ViewDetailsModal from "../components/ViewDetailsModal.jsx";
 
 const Wrapper = styled.div`
     width: 100%;
+    padding-bottom: 50px;
 `;
 
 const Loader = styled.div`
@@ -52,12 +53,19 @@ const PlayBtn = styled.button`
     cursor: pointer;
 `;
 
+const Video = styled.iframe`
+    width: 100%;
+    height: 70vh;
+    background-color: #f8dada;
+`;
+
 
 //메인페이지
 function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState();
+
 
     const [newRows, setNewRows] = useState([]);
     const [koreaRows, setKoreaRows] = useState([]);
@@ -83,7 +91,7 @@ function Home() {
                         releaseDts: date,
                     }
                 });
-                setNewRows(checkExistPoster(res));
+                setNewRows(checkExistPoster(res).slice(0,18));
             } catch (e) {
                 console.error(e);
             }
@@ -98,7 +106,7 @@ function Home() {
                         query: "크리스마스",
                     }
                 });
-                setKoreaRows(checkExistPoster(res));
+                setKoreaRows(checkExistPoster(res).slice(0,18));
             } catch (e) {
                 console.error(e);
             }
@@ -113,7 +121,7 @@ function Home() {
                         type: "애니메이션",
                     }
                 });
-                setAniRows(checkExistPoster(res));
+                setAniRows(checkExistPoster(res).slice(0,18));
             } catch (e) {
                 console.error(e);
             }
@@ -131,6 +139,8 @@ function Home() {
         setOpenModal(true);
 
     };
+
+
     useEffect(() => {
         (() => {
             getNewMovies();
@@ -144,17 +154,22 @@ function Home() {
             <Wrapper>
                 {isLoading ? (<Loader>Loading...</Loader>)
                     : (<>
-                            <Header></Header>
-                            <Banner>
-                                <Title>Movies</Title>
-                                <Overview></Overview>
-                                <PlayBtn>&#x25B6; Play</PlayBtn>
-                            </Banner>
+                            <Header/>
+                        <Video
+                        src={""}>
+
+                        </Video>
+                            {/*<Banner>*/}
+                            {/*    <Title>Movies</Title>*/}
+                            {/*    <Overview></Overview>*/}
+                            {/*    <PlayBtn>&#x25B6; Play</PlayBtn>*/}
+                            {/*</Banner>*/}
                             {newRows && newRows.length > 0 ? (
                                 <Slider
                                     title="따끈따끈, 최신 영화"
                                     data={newRows}
                                     viewDetails={viewDetails}
+                                    type={"new"}
                                 > </Slider>
                             ) : <></>}
                             {koreaRows && koreaRows.length > 0 ? (
@@ -162,6 +177,7 @@ function Home() {
                                     title="메리 크리스마스 ! 크리스마스 관련 영화"
                                     data={koreaRows}
                                     viewDetails={viewDetails}
+                                        type={"christmas"}
                                 > </Slider>
                             ) : <></>}
                             {aniRows && aniRows.length > 0 ? (
@@ -169,6 +185,7 @@ function Home() {
                                     title="가족과 함께, 애니메이션"
                                     data={aniRows}
                                     viewDetails={viewDetails}
+                                    type={"ani"}
                                 > </Slider>
                             ) : <></>}
                         </>

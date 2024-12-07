@@ -81,9 +81,14 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none;
     }
     button {
-        
+        cursor: pointer;
+        border: none;
+        font-weight: 700;
     }
 
+input{
+    outline: none;
+}
 `;
 
 createRoot(document.getElementById('root')).render(

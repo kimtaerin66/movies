@@ -14,8 +14,7 @@ const Title = styled.h2`
     font-weight: 700;
     color: #e1e4e8;
     padding-bottom: 10px;
-    padding-left: 15px;
-    border-bottom: 1px solid rgba(205, 205, 205, 0.55);
+    border-bottom: 1px solid #e1e4e8;
 `;
 const Ul = styled.ul`
 `
@@ -25,9 +24,9 @@ const Li = styled.li`
 
 
 
-function SearchedMovies() {
+function RankMovies() {
     return <Wrap>
-        <Title>검색 결과</Title>
+        <Title>이번주 영화 순위</Title>
             <Ul>
                 <Li>
                 </Li>
@@ -35,4 +34,4 @@ function SearchedMovies() {
     </Wrap>
 }
 
-export default SearchedMovies;
+export default RankMovies;
