@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {AnimatePresence, motion} from "framer-motion";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -10,8 +10,6 @@ const Wrap = styled.div`
     position: relative;
     margin-bottom: 70px;
     padding-bottom: 120px;
-
-
 `;
 const STitle = styled.p`
     font-size: 22px;
@@ -36,6 +34,7 @@ const Box = styled(motion.div)`
     height: 180px;
     font-size: 50px;
     cursor: pointer;
+    position :relative;
 
     &:first-child {
         transform-origin: center left;
@@ -43,6 +42,12 @@ const Box = styled(motion.div)`
 
     &:last-child {
         transform-origin: center right;
+    }
+
+&:hover {
+    p{
+        opacity : 1
+        }
     }
 
 `;
@@ -69,21 +74,18 @@ const LeftArrow = styled.p`
     filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.2));
 `;
 
-
-const Info = styled(motion.div)`
-    padding: 10px 0 3px 0;
-    background-color: white;
-    opacity: 0;
-    position: absolute;
-    width: 312px;
-    box-sizing: border-box;
-    bottom: 0;
-
-    h4 {
-        text-align: center;
-        font-size: 15px;
-    }
+const Info = styled.p`
+padding: 10px 0 3px 0;
+ background-color: white;
+   opacity: 0;
+   width: 100%;
+   box-sizing: border-box;
+  text-align: center;
+  position : absolute;
+font-size: 15px;
+   bottom :0
 `;
+
 //사용자의 화면크기를 알아서 보여줄부분, 숨길부분 판단
 // +5, -5은 6개씩 한줄이라 Box에 준 gap값.
 const rowVariants = {
@@ -110,55 +112,37 @@ const BoxVariants = {
         },
     },
 };
-const infoVariants = {
-    hover: {
-        opacity: 1,
-        transition: {
-            delay: 0.5,
-            duration: 0.3,
-            type: "tween", //통통튀는거 잡기
-        },
-    },
-};
-//leaving을 체크해서, 슬라이더 에러잡기
+
 
 export const offset = 6; //6개씩 보일것이니
 
 
-function Slider({title, data, viewDetails, type}) {
-    const [mIndex, setMIndex] = useState({
-        "new": 0,
-        "christmas": 0,
-        "ani": 0
-    });
+function Slider({title, data, viewDetails}) {
+    const [index, setIndex] = useState(0);
     const [leaving, setLeaving] = useState(false);
-    const maxCount = 18;
 
     const getPoster = (urls) => {
         return urls?.slice(0, 60);
     }
     const toggleLeaving = () => setLeaving((prev) => !prev);
-    const increaseIndex = (type, index) => {
-        // if ((index + 1) * offset >= maxCount) {
-        //     return;
-        // }
-        const updateMIndex = () => ({
-            ...mIndex,
-            [type]: ++mIndex[type]
-        })
-        setMIndex(updateMIndex);
+    const increaseIndex = (index) => {
+        if (index >= 2) {
+                    // 슬라이드가 끝에 도달하면 반대로
+                    setIndex(index - 1); // 이전 인덱스로 돌아가게 설정
+                } else {
+                    setIndex(index + 1); // 슬라이드가 끝에 다다르지 않으면 정상적으로 증가
+                }
+                toggleLeaving();
     }
-    const decreaseIndex = (type, index) => {
-        // if ((index + 1) * offset === 0) {
-        //     return;
-        // }
-        const updateMIndex = () => ({
-            ...mIndex,
-            [type]: --mIndex[type]
-        })
-        setMIndex(updateMIndex);
+    const decreaseIndex = (index) => {
+         if (index === 0) {
+                    // 슬라이드가 처음에 도달하면 반대로
+                    setIndex(index + 1); // 다음 인덱스로 넘어가게 설정
+                } else {
+                    setIndex(index - 1); // 슬라이드가 처음에 다다르지 않으면 정상적으로 감소
+                }
+                toggleLeaving();
     }
-
 
     return (
         <>
@@ -169,14 +153,15 @@ function Slider({title, data, viewDetails, type}) {
                     onExitComplete={toggleLeaving}
                 >
                     <Row
-                        key={mIndex}
+                        key={index}
                         variants={rowVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
+                            custom={index}
                         transition={{type: "tween", duration: 1}}
                     >
-                        {data && data.slice(offset * mIndex, offset * mIndex + offset).map((movie) => (
+                        {data && data.slice(offset * index , offset * index  + offset).map((movie) => (
                             <Box
                                 key={movie.DOCID}
                                 variants={BoxVariants}
@@ -189,22 +174,22 @@ function Slider({title, data, viewDetails, type}) {
                                 layoutId={movie.DOCID + ""}
                                 onClick={() => viewDetails(movie)}
                             >
-                                <Info variants={infoVariants}>
-                                    <h4>{movie.title.length >= 22 ? movie.title.slice(0, 22) + "..." : movie.title}</h4>
+                                <Info >
+                                    <h4>{movie.title.length >= 20 ? movie.title.slice(0, 20) + "..." : movie.title}</h4>
                                 </Info>
                             </Box>
                         ))}
-                        <LeftArrow index={mIndex}>
+                        <LeftArrow index={index}>
                             <FontAwesomeIcon icon={faAngleLeft}
-                                             onClick={() => decreaseIndex(type, mIndex)}
+                                             onClick={() => decreaseIndex(index)}
                                              color={"#eee"}
                                              size={"3x"}
                                              style={{opacity: 0.8}}
                             />
                         </LeftArrow>
-                        <RightArrow index={mIndex}>
+                        <RightArrow index={index}>
                             <FontAwesomeIcon icon={faAngleRight}
-                                             onClick={() => increaseIndex(type, mIndex)}
+                                             onClick={() => increaseIndex(index)}
                                              color={"#eee"}
                                              size={"3x"}
                                              style={{opacity: 0.8}}

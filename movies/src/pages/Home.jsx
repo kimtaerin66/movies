@@ -29,6 +29,7 @@ const Banner = styled.div`
     // background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
         //       url(${(props) => props.bg});
     background-size: cover;
+
 `;
 const Title = styled.h2`
     font-family: "GmarketSansBold";
@@ -68,7 +69,7 @@ function Home() {
 
 
     const [newRows, setNewRows] = useState([]);
-    const [koreaRows, setKoreaRows] = useState([]);
+    const [christmasRows, setChristmasRows] = useState([]);
     const [aniRows, setAniRows] = useState([]);
     const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
 
@@ -80,6 +81,20 @@ function Home() {
         listCount: 100
     }
 
+    const category = [
+        {
+            title:"따끈따끈, 최신 영화",
+            row : newRows
+        },
+        {
+            title:"메리 크리스마스 ! 크리스마스 관련 영화",
+             row : christmasRows
+        },
+        {
+            title:"가족과 함께, 애니메이션",
+            row : aniRows
+        },
+    ];
     //최신 영화(개봉일이 오늘 날짜로부터 이주전 조회)
     const getNewMovies = () => {
         (async () => {
@@ -106,7 +121,7 @@ function Home() {
                         query: "크리스마스",
                     }
                 });
-                setKoreaRows(checkExistPoster(res).slice(0,18));
+                setChristmasRows(checkExistPoster(res).slice(0,18));
             } catch (e) {
                 console.error(e);
             }
@@ -118,10 +133,11 @@ function Home() {
                 const res = await request.get(``, {
                     params: {
                         ...commonParams,
+                        listCount: 150,
                         type: "애니메이션",
                     }
                 });
-                setAniRows(checkExistPoster(res).slice(0,18));
+                setAniRows(checkExistPoster(res));
             } catch (e) {
                 console.error(e);
             }
@@ -140,7 +156,6 @@ function Home() {
 
     };
 
-
     useEffect(() => {
         (() => {
             getNewMovies();
@@ -148,7 +163,6 @@ function Home() {
             getAniMovies();
         })();
     }, []);
-
     return (
         <>
             <Wrapper>
@@ -164,29 +178,15 @@ function Home() {
                             {/*    <Overview></Overview>*/}
                             {/*    <PlayBtn>&#x25B6; Play</PlayBtn>*/}
                             {/*</Banner>*/}
-                            {newRows && newRows.length > 0 ? (
-                                <Slider
-                                    title="따끈따끈, 최신 영화"
-                                    data={newRows}
-                                    viewDetails={viewDetails}
-                                    type={"new"}
-                                > </Slider>
-                            ) : <></>}
-                            {koreaRows && koreaRows.length > 0 ? (
-                                <Slider
-                                    title="메리 크리스마스 ! 크리스마스 관련 영화"
-                                    data={koreaRows}
-                                    viewDetails={viewDetails}
-                                        type={"christmas"}
-                                > </Slider>
-                            ) : <></>}
-                            {aniRows && aniRows.length > 0 ? (
-                                <Slider
-                                    title="가족과 함께, 애니메이션"
-                                    data={aniRows}
-                                    viewDetails={viewDetails}
-                                    type={"ani"}
-                                > </Slider>
+                            {newRows && christmasRows && aniRows ? (
+                               category.map((el)=>(
+                                   <Slider
+                                       key={el.title}
+                                   title={el.title}
+                                   data={el.row}
+                                   viewDetails={viewDetails}
+                               > </Slider>
+                               ))
                             ) : <></>}
                         </>
                     )}

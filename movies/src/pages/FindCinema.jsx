@@ -7,6 +7,7 @@ const Wrap = styled.div`
     width: 100%;
     padding: 50px;
     min-width: 1200px;
+       box-sizing: border-box;
 `;
 const Title = styled.h2`
     width: 90%;

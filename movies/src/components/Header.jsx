@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect } from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
@@ -16,12 +16,14 @@ const Wrapper = styled.header`
     min-width: 100%;
     top: 0;
     left: 0;
+    z-index:10;
 `;
 
 const Logo = styled.div`
     padding-left: 10px;
     font-weight: bold;
     font-size: 22px;
+    width : 150px
 `;
 
 const Menu = styled.ul`
@@ -76,6 +78,8 @@ const Input = styled.input`
 const Left = styled.div`
     display: flex;
     margin-left: 20px;
+    width: 550px;
+
 `;
 const Right = styled.div`
     margin-right: 20px;
@@ -95,9 +99,8 @@ const LoginBtn = styled.button`
 // 사용자의 scroll을 감지해 top이 0이면 black, 내려가면 white
 //헤더 홈, 시리즈, new, 자체 컨텐츠, 내가 찜한 콘텐츠  ---- 검색창 , 마이페이지
 function Header() {
+    const [stateRow, setStateRow] = useState([]);
     const navigate = useNavigate();
-
-    const [searchRow, setSearchRows] = useState([]);
     const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
     // //공통 params
     const commonParams = {
@@ -110,9 +113,8 @@ function Header() {
     const handleSearchEnter = (e) => {
         if (e.key === "Enter") {
             searchMovies(e);
-            navigate("/search");
-        }
-    }
+            }
+}
     //영화명, 감독명 으로 검색 ?
     const searchMovies = (e) => {
         (async () => {
@@ -123,12 +125,25 @@ function Header() {
                         query: e.target.value,
                     }
                 });
-                setSearchRows(res.data.Data[0].Result);
+            console.log(res.data.Data[0].Result.filter((el) => el.posters !== ""))
+                setStateRow(res.data.Data[0].Result.filter((el) => el.posters !== ""));
+
             } catch (e) {
                 console.error(e);
             }
         })();
     };
+useEffect(()=>{
+
+    if(stateRow.length > 0){
+                     navigate("/search",{
+                         state :{
+                             data : stateRow
+                             }});
+                         }
+
+    },[stateRow])
+
     return (
         <>
             <Wrapper>
