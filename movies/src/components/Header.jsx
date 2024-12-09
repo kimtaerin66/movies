@@ -1,9 +1,9 @@
-import React, {useState,useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import request from "../config/Axios.js";
 import {Outlet, useNavigate} from "react-router-dom";
+import request from "../config/Axios.js";
 
 
 const Wrapper = styled.header`
@@ -100,6 +100,9 @@ const LoginBtn = styled.button`
 //헤더 홈, 시리즈, new, 자체 컨텐츠, 내가 찜한 콘텐츠  ---- 검색창 , 마이페이지
 function Header() {
     const [stateRow, setStateRow] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPage, setTotalPage] = useState(5);
     const navigate = useNavigate();
     const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
     // //공통 params
@@ -125,9 +128,9 @@ function Header() {
                         query: e.target.value,
                     }
                 });
-            console.log(res.data.Data[0].Result.filter((el) => el.posters !== ""))
+                setTotalPage(Math.ceil(res.data.TotalCount / 10));
+                setTotalCount(res.data.TotalCount);
                 setStateRow(res.data.Data[0].Result.filter((el) => el.posters !== ""));
-
             } catch (e) {
                 console.error(e);
             }
@@ -135,10 +138,15 @@ function Header() {
     };
 useEffect(()=>{
 
-    if(stateRow.length > 0){
+    if(stateRow.length > 0 ){
                      navigate("/search",{
                          state :{
-                             data : stateRow
+                             data : {
+                                 row : stateRow,
+                                 totalCount : totalCount,
+                                 totalPage : totalPage,
+                                 changePage: setPage
+                             }
                              }});
                          }
 
