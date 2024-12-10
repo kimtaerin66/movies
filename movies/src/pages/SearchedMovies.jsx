@@ -86,6 +86,7 @@ const Summary = styled.div`
     padding-top: 15px;
 `;
 const ReleaseDate = styled.p``;
+const Actors = styled.p``;
 const MoreBtn = styled.button`
     font-family: 'GmarketSansMedium';
     font-size: 13px;
@@ -143,6 +144,7 @@ function SearchedMovies() {
     useEffect(() => {
         (() => {
             searchMovies();
+            console.log(row[0])
         })();
     }, [query,page]);
 
@@ -162,6 +164,7 @@ function SearchedMovies() {
                                 <Genre>장르 : {movie.genre} / 국가 : {movie.nation}</Genre>
                                 <ReleaseDate>개봉일
                                     : {movie.ratings.rating[0].releaseDate ? movie.ratings.rating[0].releaseDate.slice(0, 8) : "확인불가"} / {movie.rating ? movie.rating : "전체관람가"}</ReleaseDate>
+                              <Actors>출연 : {movie.staffs?.staff?.slice(0,10).map((el)=> el.staffNm+" ")} </Actors>
                                 <Summary>{movie.plots.plot[0].plotText.length > 300 ? movie.plots.plot[0].plotText.slice(0, 300) + "..." : movie.plots.plot[0].plotText}</Summary>
 
                                 <Right> <MoreBtn>더보기</MoreBtn> </Right>
