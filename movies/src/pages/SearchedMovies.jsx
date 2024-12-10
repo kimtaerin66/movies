@@ -1,12 +1,14 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import styled from "styled-components";
-import {useLocation} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
+import request from "../config/Axios.js";
 import Pagenation from "../components/Pagenation.jsx";
 
 const Wrap = styled.div`
     margin-top: 70px;
     max-width: 100%;
     padding: 50px;
+    margin-left: 50px;
     min-width: 1200px;
     color: #fff;
     box-sizing: border-box;
@@ -48,8 +50,16 @@ const Poster = styled.div`
     width: 150px;
     height: 200px;
     margin-right: 25px;
+    color: white;
 `;
-
+const NoPoster = styled.div`
+    text-align: center;
+    line-height: 200px;
+    width: 150px;
+    height: 200px;
+    margin-right: 25px;
+    background-color: #888888;
+`
 const Desc = styled.div`
     margin: 10px;
     width: 90%;
@@ -61,7 +71,7 @@ const Desc = styled.div`
     }
 `;
 const Right = styled.div`
-text-align: right;
+    text-align: right;
 `;
 
 const MTitle = styled.p`
@@ -86,16 +96,55 @@ const MoreBtn = styled.button`
 `;
 
 function SearchedMovies() {
-    //검색시 보낸 데이터 받아오기
-    const location = useLocation();
-    const {row, totalCount, totalPage, setPage} = location.state.data;
+    const {query} = useParams();
+    const [row, setRow] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPages, setTotalPages] = useState(5);
+
+    const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
+    // //공통 params
+    const commonParams = {
+        collection: "kmdb_new2",
+        detail: "Y", //포스터
+        ServiceKey: SERVICE_KEY,
+        listCount: 50
+    }
+
+    const searchMovies = () => {
+        (async () => {
+            try {
+                const res = await request.get(``, {
+                    params: {
+                        ...commonParams,
+                        query: query,
+                        startCount : (page-1) *10
+                    }
+                });
+
+                setTotalPages(res.data.TotalCount > 0 ? Math.ceil(res.data.TotalCount / 10) : 0);
+                setTotalCount(res.data.TotalCount);
+                setRow(res.data?.Data[0]?.Result);
+
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+    };
+
     const getPoster = (urls) => {
         return urls?.slice(0, 60);
+
     }
+    useLayoutEffect(()=>{
+        searchMovies();
+    },[])
+
     useEffect(() => {
         (() => {
+            searchMovies();
         })();
-    }, []);
+    }, [query,page]);
 
     return (
         <Wrap>
@@ -105,13 +154,14 @@ function SearchedMovies() {
                 {row ? (
                     row.slice(0, 5).map((movie) => (
                         <Li key={movie.DOCID}>
-                            <Poster bg={() => getPoster(movie.posters)}></Poster>
+                            {movie.posters !== "" ? (<Poster bg={() => getPoster(movie.posters)}></Poster>)
+                                : <NoPoster>No poster</NoPoster>}
                             <Desc>
 
                                 <MTitle> {movie.title}</MTitle>
                                 <Genre>장르 : {movie.genre} / 국가 : {movie.nation}</Genre>
                                 <ReleaseDate>개봉일
-                                    : {movie.ratings.rating[0].releaseDate ? movie.ratings.rating[0].releaseDate : "개봉일 확인불가"} / {movie.rating}</ReleaseDate>
+                                    : {movie.ratings.rating[0].releaseDate ? movie.ratings.rating[0].releaseDate.slice(0, 8) : "확인불가"} / {movie.rating ? movie.rating : "전체관람가"}</ReleaseDate>
                                 <Summary>{movie.plots.plot[0].plotText.length > 300 ? movie.plots.plot[0].plotText.slice(0, 300) + "..." : movie.plots.plot[0].plotText}</Summary>
 
                                 <Right> <MoreBtn>더보기</MoreBtn> </Right>
@@ -122,9 +172,9 @@ function SearchedMovies() {
             </Ul>
             {totalCount !== 0 ? (
                 <Pagenation
-                    page={1}
-                    //         limit={limit}
-                    totalPage={totalPage}
+                    page={page}
+                    limit={10}
+                    totalPages={totalPages}
                     changePage={setPage}
                 />
             ) : null}

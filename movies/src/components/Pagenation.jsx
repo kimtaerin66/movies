@@ -13,20 +13,20 @@ const Paging = styled.ul`
   justify-content: center;
 `;
 const PageNum = styled.li`
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  cursor: pointer;
-  margin: 0 5px;
-  font-size: 14px;
-  color: #1c304a;
-  text-align: center;
-  line-height: 28px;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 14px;
+    color: #d6d7d8;
+    text-align: center;
+    line-height: 28px;
 `
 
 const Clicked = styled(PageNum)`
-  font-weight: 500;
-  background-color: #eee;
+    font-weight: 500;
+    color: #ff4444;
 `;
 
 const Bgnone =styled.li`

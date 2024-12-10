@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import {Outlet, useNavigate} from "react-router-dom";
-import request from "../config/Axios.js";
+
 
 
 const Wrapper = styled.header`
@@ -99,58 +99,23 @@ const LoginBtn = styled.button`
 // 사용자의 scroll을 감지해 top이 0이면 black, 내려가면 white
 //헤더 홈, 시리즈, new, 자체 컨텐츠, 내가 찜한 콘텐츠  ---- 검색창 , 마이페이지
 function Header() {
-    const [stateRow, setStateRow] = useState([]);
-    const [page, setPage] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
-    const [totalPage, setTotalPage] = useState(5);
     const navigate = useNavigate();
-    const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
-    // //공통 params
-    const commonParams = {
-        collection: "kmdb_new2",
-        detail: "Y", //포스터
-        ServiceKey: SERVICE_KEY,
-        listCount: 50
-    }
 
     const handleSearchEnter = (e) => {
         if (e.key === "Enter") {
-            searchMovies(e);
+            const query = e.target.value;
+            if(query === ""){
+                return;
             }
-}
-    //영화명, 감독명 으로 검색 ?
-    const searchMovies = (e) => {
-        (async () => {
-            try {
-                const res = await request.get(``, {
-                    params: {
-                        ...commonParams,
-                        query: e.target.value,
-                    }
-                });
-                setTotalPage(Math.ceil(res.data.TotalCount / 10));
-                setTotalCount(res.data.TotalCount);
-                setStateRow(res.data.Data[0].Result.filter((el) => el.posters !== ""));
-            } catch (e) {
-                console.error(e);
-            }
-        })();
-    };
-useEffect(()=>{
+            navigateSearch(query);
+}}
+    const navigateSearch = (query)=>{
+        if(query === ""){
+            return;
+        }
+        navigate(`/search/${query}`);
+    }
 
-    if(stateRow.length > 0 ){
-                     navigate("/search",{
-                         state :{
-                             data : {
-                                 row : stateRow,
-                                 totalCount : totalCount,
-                                 totalPage : totalPage,
-                                 changePage: setPage
-                             }
-                             }});
-                         }
-
-    },[stateRow])
 
     return (
         <>
@@ -177,7 +142,7 @@ useEffect(()=>{
                                              cursor: "pointer", paddingRight: "10px",
                                              position: "absolute", right: "5px"
                                          }}
-                                         onClick={(e) => searchMovies(e)}
+                                         onClick={(e) => navigateSearch(e.target.value)}
                         />
                     </Search>
                     {/*<FontAwesomeIcon icon={faUser}*/}
