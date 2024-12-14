@@ -5,11 +5,9 @@ import request from "../config/Axios.js";
 import Pagenation from "../components/Pagenation.jsx";
 
 const Wrap = styled.div`
-    margin-top: 70px;
-    max-width: 100%;
+    width: 1400px;
     padding: 50px;
-    margin-left: 50px;
-    min-width: 1200px;
+    margin: 0 auto;
     color: #fff;
     box-sizing: border-box;
 `;
@@ -19,7 +17,7 @@ const Total = styled.p`
     margin-top: 15px;
 `;
 const Title = styled.h2`
-    width: 90%;
+    margin-top: 70px;
     font-size: 22px;
     font-weight: 700;
     color: #e1e4e8;
@@ -28,19 +26,18 @@ const Title = styled.h2`
     border-bottom: 1px solid rgba(205, 205, 205, 0.55);
 `;
 const Ul = styled.ul`
-    margin-top: 15px;
     margin-left: 50px;
+    margin-top: 15px;
 `
 const Li = styled.li`
     display: flex;
     justify-content: space-between;
-    width: 85%;
     height: 200px;
     margin-bottom: 25px;
     font-size: 14px;
     font-weight: 400;
     margin-right: 10px;
-    padding-bottom: 15px;
+    padding-bottom: 55px;
     border-bottom: 1px solid rgba(205, 205, 205, 0.2);
 `;
 const Poster = styled.div`
@@ -64,7 +61,6 @@ const Desc = styled.div`
     margin: 10px;
     width: 90%;
     font-size: 14px;
-    font-family: 'GmarketSansLight';
 
     p {
         margin: 2px 0
@@ -88,7 +84,6 @@ const Summary = styled.div`
 const ReleaseDate = styled.p``;
 const Actors = styled.p``;
 const MoreBtn = styled.button`
-    font-family: 'GmarketSansMedium';
     font-size: 13px;
     margin-top: 15px;
     color: #fff;
@@ -144,7 +139,6 @@ function SearchedMovies() {
     useEffect(() => {
         (() => {
             searchMovies();
-            console.log(row[0])
         })();
     }, [query,page]);
 

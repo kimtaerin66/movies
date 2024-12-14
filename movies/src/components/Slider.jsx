@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {AnimatePresence, motion} from "framer-motion";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -8,7 +8,7 @@ import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 const Wrap = styled.div`
     margin-top: 100px;
     position: relative;
-    margin-bottom: 70px;
+    margin-bottom: 130px;
     padding-bottom: 120px;
 `;
 const STitle = styled.p`
@@ -27,14 +27,14 @@ const Row = styled(motion.div)`
     width: 100%;
 
 `;
-const Box = styled(motion.div)`
+const Box = styled.div`
     background-image: url(${(props) => props.bg});
     background-size: cover;
     background-position: top center; //상하 좌우
-    height: 180px;
+    height: 220px;
     font-size: 50px;
     cursor: pointer;
-    position :relative;
+    position: relative;
 
     &:first-child {
         transform-origin: center left;
@@ -44,9 +44,9 @@ const Box = styled(motion.div)`
         transform-origin: center right;
     }
 
-&:hover {
-    p{
-        opacity : 1
+    &:hover {
+        p {
+            opacity: 1
         }
     }
 
@@ -75,15 +75,16 @@ const LeftArrow = styled.p`
 `;
 
 const Info = styled.p`
-padding: 10px 0 3px 0;
- background-color: white;
-   opacity: 0;
-   width: 100%;
-   box-sizing: border-box;
-  text-align: center;
-  position : absolute;
-font-size: 15px;
-   bottom :0
+    padding: 10px 0 3px 0;
+    background-color: white;
+    opacity: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    position: absolute;
+    font-size: 15px;
+    bottom: 0;
+    font-weight: 600;
 `;
 
 //사용자의 화면크기를 알아서 보여줄부분, 숨길부분 판단
@@ -127,21 +128,21 @@ function Slider({title, data, viewDetails}) {
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const increaseIndex = (index) => {
         if (index >= 2) {
-                    // 슬라이드가 끝에 도달하면 반대로
-                    setIndex(index - 1); // 이전 인덱스로 돌아가게 설정
-                } else {
-                    setIndex(index + 1); // 슬라이드가 끝에 다다르지 않으면 정상적으로 증가
-                }
-                toggleLeaving();
+            // 슬라이드가 끝에 도달하면 반대로
+            setIndex(index - 1); // 이전 인덱스로 돌아가게 설정
+        } else {
+            setIndex(index + 1); // 슬라이드가 끝에 다다르지 않으면 정상적으로 증가
+        }
+        toggleLeaving();
     }
     const decreaseIndex = (index) => {
-         if (index === 0) {
-                    // 슬라이드가 처음에 도달하면 반대로
-                    setIndex(index + 1); // 다음 인덱스로 넘어가게 설정
-                } else {
-                    setIndex(index - 1); // 슬라이드가 처음에 다다르지 않으면 정상적으로 감소
-                }
-                toggleLeaving();
+        if (index === 0) {
+            // 슬라이드가 처음에 도달하면 반대로
+            setIndex(index + 1); // 다음 인덱스로 넘어가게 설정
+        } else {
+            setIndex(index - 1); // 슬라이드가 처음에 다다르지 않으면 정상적으로 감소
+        }
+        toggleLeaving();
     }
 
     return (
@@ -158,10 +159,10 @@ function Slider({title, data, viewDetails}) {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                            custom={index}
+                        custom={index}
                         transition={{type: "tween", duration: 1}}
                     >
-                        {data && data.slice(offset * index , offset * index  + offset).map((movie) => (
+                        {data && data.slice(offset * index, offset * index + offset).map((movie) => (
                             <Box
                                 key={movie.DOCID}
                                 variants={BoxVariants}
@@ -174,7 +175,7 @@ function Slider({title, data, viewDetails}) {
                                 layoutId={movie.DOCID + ""}
                                 onClick={() => viewDetails(movie)}
                             >
-                                <Info >
+                                <Info>
                                     <h4>{movie.title.length >= 20 ? movie.title.slice(0, 20) + "..." : movie.title}</h4>
                                 </Info>
                             </Box>

@@ -56,7 +56,7 @@ const GlobalStyle = createGlobalStyle`
     body {
         color: #333;
         line-height: 1.2;
-        font-family: "GmarketSansMedium", 'Noto Sans', sans-serif;
+        font-family: "GmarketSansMedium","GmarketSansLight","GmarketSansBold" ,'Noto Sans', sans-serif;
         background-color: black;
         letter-spacing: -0.5px;
         max-width: 100%;
