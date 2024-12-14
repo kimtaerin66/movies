@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet, useLocation, useNavigate} from "react-router-dom";
 
 
 
@@ -100,7 +100,8 @@ const LoginBtn = styled.button`
 //헤더 홈, 시리즈, new, 자체 컨텐츠, 내가 찜한 콘텐츠  ---- 검색창 , 마이페이지
 function Header() {
     const navigate = useNavigate();
-
+    const {pathname} = useLocation();
+    const inputRef = useRef("");
     const handleSearchEnter = (e) => {
         if (e.key === "Enter") {
             const query = e.target.value;
@@ -115,6 +116,13 @@ function Header() {
         }
         navigate(`/search/${query}`);
     }
+
+    useEffect(() => {
+        if(!pathname.startsWith("/search") && inputRef.current.value !==""){
+            //e.target.value 초기화
+            inputRef.current.value = "";
+        }
+    }, [pathname]);
 
 
     return (
@@ -132,6 +140,7 @@ function Header() {
                     <Search>
                         <Input
                             type={"search"}
+                            ref={inputRef}
                             placeholder={"영화명, 감독명을 검색하세요"}
                             onKeyDown={(e) => handleSearchEnter(e)}
                         />
