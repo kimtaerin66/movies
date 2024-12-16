@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Map} from "react-kakao-maps-sdk";
+import Map from "../components/Map.jsx"
 
 
 const Wrap = styled.div`
@@ -22,11 +22,7 @@ const Title = styled.h2`
 function FindCinema() {
     return <Wrap>
         <Title>내 주변 영화관찾기</Title>
-        <Map
-            center={{ lat: 33.450701, lng: 126.570667 }}
-            style={{ width: '1200px', height: '600px', margin : '0 auto' }}
-            level={3}
-        />
+      <Map />
     </Wrap>
 }
 
