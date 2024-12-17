@@ -1,37 +1,7 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
-import useGeoLocation from "../utils/useGeolocation.jsx";
-import requestForMapKeword from "../config/AxiosForMap.js";
+import React, {useEffect, useRef} from "react";
 
-function Map(){
+function Map({location,marker}){
     const mapContainerRef = useRef(null); // 지도 div를 참조하기 위한 ref
-    const location = useGeoLocation();
-    //영화관 찾기
-    const [marker, setMarker] = useState([]);
-    const findNearCinema = async () => {
-        try {
-            const res = await requestForMapKeword.get(``, {
-                params: {
-                    query: "영화관",
-                    x: location.coordinates.lng,//lng
-                    y: location.coordinates.lat
-                }
-            });
-           const list = res.data.documents.map((el) => (
-               {"title": el.place_name, "latlng": new kakao.maps.LatLng(el.y, el.x)}));
-            setMarker(list)
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-
-    useLayoutEffect(() => {
-        if (location.loaded) {
-            findNearCinema()
-        }
-    }, [location])
-
-
     useEffect(() => {
         // 카카오 맵 API가 로드된 후에 실행되는 코드
         if (window.kakao) {
@@ -71,8 +41,7 @@ function Map(){
             ref={mapContainerRef}
             style={{ width: '1200px', height: '600px', margin: '0 auto' }}
         />
-    );
-
+    )
 }
 
 export default Map;
