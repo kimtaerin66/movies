@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
 import styled from "styled-components";
 import requestForRank from "../config/AxiosForRank.js";
 import moment from "moment/moment.js";
@@ -6,15 +6,14 @@ import request from "../config/Axios.js";
 
 
 const Wrap = styled.div`
-    margin-top: 70px;
-    width: 100%;
     padding: 50px;
-    min-width: 1200px;
+    width: 1400px;
+    margin: 0 auto;
     box-sizing: border-box;
 `;
 const Title = styled.h2`
-    width: 90%;
     font-size: 22px;
+    margin-top: 70px;
     font-weight: 700;
     color: #e1e4e8;
     padding-bottom: 10px;
@@ -24,109 +23,102 @@ const Number = styled.div`
     -webkit-text-stroke-color: #dadada;
     -webkit-text-stroke-width: 1px;
     color: transparent;
-    font-size: 160px;
+    font-size: 40px;
     display: flex;
+    margin-right: 10px;
 `;
 const Ul = styled.ul`
     display: flex;
-    width: 90%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
     justify-content: center;
-    margin: 50px 0;
-
+    margin: 70px 0;
+    color: white;
 `
 const Li = styled.li`
-    display: flex;
-    margin-right: 50px;
-
-    &:last-child {
+    margin-bottom: 60px;
+    margin-right: 43px;
+    &:nth-child(5),
+    &:last-child{
         margin-right: 0;
     }
 `;
-
-const Poster = styled.div`
-        //background-image: url(${(props) => props.bg});
-    background-color: #888888;
+const LiTop = styled.div`
+    display: flex;
+`;
+const Poster = styled.img`
     background-size: cover;
     background-position: top center;
     cursor: pointer;
     position: relative;
     width: 180px;
-    height: 220px;
+    height: 260px;
     font-size: 16px;
 
 `;
-const Table = styled.table`
-    color: #fff;
-    width: 700px;
-    border: 1px solid #888;
-    text-align: center;
-  
-`;
+const Desc = styled.div`
+    padding-top: 20px;
+    padding-left: 30px;
+    text-align: center`;
 
-const Tr = styled.tr`
-    border-bottom: 1px solid #888;
-`;
-const Th = styled.th`
-    font-weight: 500;
-    padding: 15px 25px;
-`;
-const Td = styled.td`
-    padding: 16px 25px;
-    vertical-align: middle;
-    line-height: 22px;
-`;
-
-
+const MTitle = styled.p`
+    font-weight: 600`;
+const Count = styled.p`
+    padding-top: 6px;
+    font-size: 14px;
+   font-family: GmarketSansLight;
+`
 function RankMovies() {
-    const VITE_KOFIC_KEY = import.meta.env.VITE_KOFIC_KEY;
-    const [poster, setPoster] = useState([]);
-    const [todayRow, setTodayRow] = useState([]);
+    //영화 랭킹   -  순위, 영화이름, 포스터, 예매율
+    const [row, setRow] = useState([]);
+    const getRank = async () => {
+        const VITE_KOFIC_KEY = import.meta.env.VITE_KOFIC_KEY;
+        //어제날짜구하기
+        const date = moment(new Date()).subtract(1, "day").format("YYYYMMDD");
 
-    const thead = ["순위", "영화명", "개봉일", "당일 관객수", "누적 관객수"];
-
-    const getRank = () => {
-        (async () => {
-            try {
-                //어제날짜구하기
-                const date = moment(new Date()).subtract(1, "day").format("YYYYMMDD");
-                const res = await requestForRank.get(``, {
-                    params: {
-                        key: VITE_KOFIC_KEY,
-                        targetDt: date,
-                        itemPerPage: "10",
-                    }
-                });
-                setTodayRow(res.data.boxOfficeResult.dailyBoxOfficeList.slice(0, 5));
-            } catch (e) {
-                console.error(e);
-            }
-        })();
-    };
-
-    const getPoster = (row) => {
-        const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
-        const updatePoster = [];
-        row.map((el) => {
-            (async () => {
-                const res = await request.get(``, {
-                    params: {
-                        collection: "kmdb_new2",
-                        detail: "Y", //포스터
-                        ServiceKey: SERVICE_KEY,
-                        listCount: 1,
-                        title: el.movieNm,
-                        releaseDts: el.openDt.replaceAll("-", "")
-                    }
-                });
-                if (res) {
-                    const url = res.data.Data[0].Result[0].posters.slice(0, 60);
-                    updatePoster[el.rank] = [el.movieNm, url];
-                    setPoster(updatePoster);
-                    console.log(updatePoster)
-
+        try {
+            const res = await requestForRank.get(``, {
+                params: {
+                    key: VITE_KOFIC_KEY,
+                    targetDt: date,
+                    weekGb: 0,
+                    itemPerPage: "10",
                 }
-            })();
-        })
+            });
+            // 영화 목록에서 상위 5개 선택
+            const movieList = res.data.boxOfficeResult.dailyBoxOfficeList.slice(0, 10);
+            // 각 영화에 대해 getPoster 호출 및 결과 처리
+            const newRow = [];
+            for (let el of movieList) {
+                // getPoster의 반환값을 기다린 후 row에 추가
+                const poster = await getPoster(el);  // 비동기 결과 기다리기
+                newRow.push([el.rank, el.movieNm, poster, el.salesShare]);
+            }
+            setRow(newRow);
+        } catch (error) {
+            console.error("Error fetching movie rank or poster:", error);
+        }
+    };
+    const getPoster = async (el) => {
+        const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
+        try {
+            const res = await request.get(``, {
+                params: {
+                    collection: "kmdb_new2",
+                    detail: "Y", //포스터
+                    ServiceKey: SERVICE_KEY,
+                    listCount: 1,
+                    title: el.movieNm,
+                    releaseDts: el.openDt.replaceAll("-", "")
+                }
+            });
+            const posters = res.data.Data[0].Result[0].posters.slice(0, 60);
+            return posters; // 포스터 리스트 반환
+        } catch (error) {
+            console.error("Error fetching poster:", error);
+            return [];  // 오류 발생 시 빈 배열 반환
+        }
     };
 
     useLayoutEffect(() => {
@@ -134,33 +126,25 @@ function RankMovies() {
     }, [])
 
 
-    useEffect(() => {
-        console.log(todayRow)
-    }, [todayRow])
-
-    return (<Wrap>
-            <Title>이번주 영화 순위</Title>
-            <Ul>
-                {todayRow.map((movie, index) =>
-                    <Li key={movie.rank}>
-                        <Number>
-                            {movie.rank}
-                        </Number>
-                        <Poster/>
-                    </Li>
-                )}
-            </Ul>
-            <Table>
-                <Tr>  {thead.map((el, index) => (
-                    <Th key={index}>{el}</Th>
-                ))}
-                </Tr>
-                    {todayRow.map((el)=>(
-                        <Tr>  <Td>{el.rank}</Td> <Td>{el.movieNm}</Td> <Td>{el.openDt}</Td><Td>{el.audiCnt}</Td><Td>{el.audiAcc}</Td> </Tr>
-                    ))}
-            </Table>
-        </Wrap>
-    )
+    return <Wrap>
+        <Title>주간 영화 순위</Title>
+        <Ul>
+            {row && row.map(([rank, movieNm, poster,salesShare], index) => (
+                <Li key={index}>
+                    <LiTop>
+                        <Number>{rank}</Number>
+                        {poster && poster.length > 0 ? (
+                            <Poster src={poster}></Poster>
+                        ) : (<></>)}
+                    </LiTop>
+                    <Desc>
+                        <MTitle>{movieNm}</MTitle>
+                        <Count>예매율 : {salesShare}% </Count>
+                    </Desc>
+                </Li>
+            ))}
+        </Ul>
+    </Wrap>
 }
 
 export default RankMovies;
