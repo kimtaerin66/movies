@@ -4,7 +4,7 @@ const useGeoLocation = () => {
     //현위치
     const [location, setLocation] = useState({
         loaded: false,
-        coordinates: {lat: 0, lng: 0,}
+        coordinates: { lng: 0,lat: 0}
     });
 
     // 성공시
@@ -12,8 +12,8 @@ const useGeoLocation = () => {
         setLocation({
             loaded: true,
             coordinates: {
-                lat: location.coords.latitude,
-                lng: location.coords.longitude,
+                lng: location.coords.longitude.toFixed(6),
+                lat: location.coords.latitude.toFixed(6),
             }
         })
     }
