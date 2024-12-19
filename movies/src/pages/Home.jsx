@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import request from "../config/Axios.js";
 import moment from "moment";
@@ -16,48 +16,49 @@ const Loader = styled.div`
     height: 20vh;
     text-align: center;
     display: flex;
-    justify-content: center;
+    //justify-content: center;
     align-items: center;
 `;
 const Banner = styled.div`
     //전체화면
-    height: 50vh;
+    height: 600px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 60px;
-    // background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-        //       url(${(props) => props.bg});
-    background-size: cover;
+    position: relative;
+    justify-content: right;
+ 
+    padding-top: 60px;
+    color: #eee;
 
+`;
+const BgImg = styled.div`
+    background-image: linear-gradient(90deg, black, rgba(0, 0, 0, 0)),url(${(props) => props.bg});
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 1100px;
+    height: 650px;
 `;
 const Title = styled.h2`
     font-family: "GmarketSansBold";
-    font-size: 58px;
-    margin-bottom: 20px;
-    margin-top: 30px;
+    font-size: 42px;
+    margin-bottom: 30px;
+    margin-top: 80px;
+    
+    p{
+        font-size: 20px;
+    }
 `;
-const Overview = styled.p`
-    font-size: 25px;
+const Desc = styled.div`
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    font-size: 18px;
     width: 40%;
     font-family: "GmarketSansLight";
     line-height: 1.5;
 `;
-
-const PlayBtn = styled.button`
-    width: 150px;
-    height: 50px;
-    border-radius: 5px;
-    border: none;
-    margin: 25px 0;
-    font-size: 22px;
-    cursor: pointer;
-`;
-
-const Video = styled.iframe`
-    width: 100%;
-    height: 70vh;
-    background-color: #f8dada;
+const Summury = styled.div`
+    font-size: 15px;
+    padding-top: 20px;
 `;
 
 
@@ -66,7 +67,8 @@ function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState();
-
+    //내 화면사이즈 받기 / 6
+    const [boxWidth, setBoxWidth] = useState(0);
 
     const [newRows, setNewRows] = useState([]);
     const [christmasRows, setChristmasRows] = useState([]);
@@ -83,16 +85,16 @@ function Home() {
 
     const category = [
         {
-            title:"따끈따끈, 최신 영화",
-            row : newRows
+            title: "따끈따끈, 최신 영화",
+            row: newRows
         },
         {
-            title:"메리 크리스마스 ! 크리스마스 관련 영화",
-             row : christmasRows
+            title: "메리 크리스마스 ! 크리스마스 관련 영화",
+            row: christmasRows
         },
         {
-            title:"가족과 함께, 애니메이션",
-            row : aniRows
+            title: "가족과 함께, 애니메이션",
+            row: aniRows
         },
     ];
     //최신 영화(개봉일이 오늘 날짜로부터 이주전 조회)
@@ -106,7 +108,7 @@ function Home() {
                         releaseDts: date,
                     }
                 });
-                setNewRows(checkExistPoster(res).slice(0,18));
+                setNewRows(checkExistPoster(res).slice(0, 18));
             } catch (e) {
                 console.error(e);
             }
@@ -121,7 +123,7 @@ function Home() {
                         query: "크리스마스",
                     }
                 });
-                setChristmasRows(checkExistPoster(res).slice(0,18));
+                setChristmasRows(checkExistPoster(res).slice(0, 18));
             } catch (e) {
                 console.error(e);
             }
@@ -146,7 +148,7 @@ function Home() {
     const checkExistPoster = (res) => {
         return res.data.Data[0].Result.filter((el) => el.posters !== "");
     }
-    const closeModal = ()=>{
+    const closeModal = () => {
         setOpenModal(false);
     }
 
@@ -155,7 +157,9 @@ function Home() {
         setOpenModal(true);
 
     };
-
+    useLayoutEffect(()=>{
+        setBoxWidth(innerWidth / 6);
+    },[])
     useEffect(() => {
         (() => {
             getNewMovies();
@@ -169,24 +173,27 @@ function Home() {
                 {isLoading ? (<Loader>Loading...</Loader>)
                     : (<>
                             <Header/>
-                        <Video
-                        src={""}>
-
-                        </Video>
-                            {/*<Banner>*/}
-                            {/*    <Title>Movies</Title>*/}
-                            {/*    <Overview></Overview>*/}
-                            {/*    <PlayBtn>&#x25B6; Play</PlayBtn>*/}
-                            {/*</Banner>*/}
-                            {newRows && christmasRows && aniRows ? (
-                               category.map((el)=>(
-                                   <Slider
-                                       key={el.title}
-                                   title={el.title}
-                                   data={el.row}
-                                   viewDetails={viewDetails}
-                               > </Slider>
-                               ))
+                            <Banner >
+                                <BgImg bg={"/src/assets/m1.jpg"}> </BgImg>
+                                <Desc>
+                                    <Title>Eternal Sunshine <p>이터널 선샤인</p></Title>
+                                    <p>극영화  | 15세이상관람가 | 미국 | 107분  </p>
+                                    <p>2024-12-18 재개봉</p>
+                                    <Summury>사랑은 그렇게 다시 기억된다..
+                                        조엘은 아픈 기억만을 지워준다는 라쿠나사를 찾아가 헤어진 연인 클레멘타인의 기억을 지우기로 결심한다. 기억이 사라져 갈수록 조엘은 사랑이 시작되던 순간,
+                                        행복한 기억들, 가슴 속에 각인된 추억들을 지우기 싫어지기만 하는데... 당신을 지우면 이 아픔도 사라질까요? 사랑은 그렇게 다시 기억된다. </Summury>
+                                </Desc>
+                            </Banner>
+                            {newRows && christmasRows && aniRows && boxWidth ? (
+                                category.map((el) => (
+                                    <Slider
+                                        key={el.title}
+                                        title={el.title}
+                                        data={el.row}
+                                        viewDetails={viewDetails}
+                                        width={boxWidth}
+                                    > </Slider>
+                                ))
                             ) : <></>}
                         </>
                     )}
