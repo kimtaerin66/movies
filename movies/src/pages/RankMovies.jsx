@@ -8,6 +8,7 @@ import request from "../config/Axios.js";
 const Wrap = styled.div`
     padding: 50px;
     width: 1400px;
+    color: #e1e4e8;
     margin: 0 auto;
     box-sizing: border-box;
 `;
@@ -15,7 +16,7 @@ const Title = styled.h2`
     font-size: 22px;
     margin-top: 70px;
     font-weight: 700;
-    color: #e1e4e8;
+
     padding-bottom: 10px;
     border-bottom: 1px solid #e1e4e8;
 `;
@@ -38,7 +39,7 @@ const Ul = styled.ul`
 `
 const Li = styled.li`
     margin-bottom: 60px;
-    margin-right: 43px;
+    width: 20%;
     &:nth-child(5),
     &:last-child{
         margin-right: 0;
@@ -46,6 +47,7 @@ const Li = styled.li`
 `;
 const LiTop = styled.div`
     display: flex;
+   justify-content: center;
 `;
 const Poster = styled.img`
     background-size: cover;
@@ -55,7 +57,6 @@ const Poster = styled.img`
     width: 180px;
     height: 260px;
     font-size: 16px;
-
 `;
 const Desc = styled.div`
     padding-top: 20px;
@@ -69,8 +70,13 @@ const Count = styled.p`
     font-size: 14px;
    font-family: GmarketSansLight;
 `
+const Loading = styled.div`
+text-align: center;
+    margin-top: 400px;
+`;
 function RankMovies() {
     //영화 랭킹   -  순위, 영화이름, 포스터, 예매율
+    const [loading, setLoading] = useState(false);
     const [row, setRow] = useState([]);
     const getRank = async () => {
         const VITE_KOFIC_KEY = import.meta.env.VITE_KOFIC_KEY;
@@ -96,6 +102,7 @@ function RankMovies() {
                 newRow.push([el.rank, el.movieNm, poster, el.salesShare]);
             }
             setRow(newRow);
+            setLoading(true);
         } catch (error) {
             console.error("Error fetching movie rank or poster:", error);
         }
@@ -127,6 +134,7 @@ function RankMovies() {
 
 
     return <Wrap>
+        {loading ? <>
         <Title>주간 영화 순위</Title>
         <Ul>
             {row && row.map(([rank, movieNm, poster,salesShare], index) => (
@@ -138,12 +146,14 @@ function RankMovies() {
                         ) : (<></>)}
                     </LiTop>
                     <Desc>
-                        <MTitle>{movieNm}</MTitle>
+                        <MTitle>{movieNm.length > 15 ? movieNm.slice(0,15) +".." : movieNm}</MTitle>
                         <Count>예매율 : {salesShare}% </Count>
                     </Desc>
                 </Li>
             ))}
         </Ul>
+            </>
+            :<Loading> Loading ... </Loading>}
     </Wrap>
 }
 
