@@ -159,8 +159,8 @@ function Header() {
                     {/*                 color={"#333"}*/}
                     {/*                 style={{cursor: "pointer", padding: "0 7px"}}*/}
                     {/*/>*/}
-                    <LoginBtn
-                        onClick={() => navigate("/login")}> 로그인 </LoginBtn>
+                    {/*<LoginBtn*/}
+                    {/*    onClick={() => navigate("/login")}> 로그인 </LoginBtn>*/}
                 </Right>
             </Wrapper>
             <Outlet></Outlet>
