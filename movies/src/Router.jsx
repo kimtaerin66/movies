@@ -5,7 +5,7 @@ import Login from "./pages/Login.jsx";
 import SearchedMovies from "./pages/SearchedMovies.jsx";
 import RankMovies from "./pages/RankMovies.jsx";
 import FindCinema from "./pages/FindCinema.jsx";
-
+//based url추가
 //createBrowserRouter 를 사용하면 기본 라우터보다 중첩라우팅에 편리하다.
 const Router = () => {
     return <RouterProvider router={router}/>;
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
                 errorElement: "",
             },
             {
+                path: "kakao/callback",
+                element: <Login/>
+            },
+            {
                 path: "/search/:query",
                 element: <SearchedMovies/>
             },
@@ -39,7 +43,7 @@ const router = createBrowserRouter([
                 element: <FindCinema/>
             }
         ]
-    },
+    }
 ]);
 
 export default Router;
